@@ -23,6 +23,7 @@
 #include "Player.h"
 #include "SpellInfo.h"
 #include "SpellMgr.h"
+#include "Totem.h"
 #include "Unit.h"
 #include "UnitEvents.h"
 
@@ -80,6 +81,41 @@ bool ThreatCalcHelper::isValidProcess(Unit* hatedUnit, Unit* hatingUnit, SpellIn
     // spell not causing threat
     if (threatSpell && threatSpell->HasAttribute(SPELL_ATTR1_NO_THREAT))
         return false;
+
+    // eliminate shaman totem threat
+    if (hatedUnit->IsTotem())
+        if (Totem* totem = hatedUnit->ToTotem())
+            if (totem->GetOwner()->IsPlayer())
+                if ((totem->GetEntry() == 3527) || // Healing Stream Totem (Rank 1)
+                    (totem->GetEntry() == 3906) || // Healing Stream Totem (Rank 2)
+                    (totem->GetEntry() == 3907) || // Healing Stream Totem (Rank 3)
+                    (totem->GetEntry() == 3908) || // Healing Stream Totem (Rank 4)
+                    (totem->GetEntry() == 3909) || // Healing Stream Totem (Rank 5)
+                    (totem->GetEntry() == 15488) || // Healing Stream Totem (Rank 6)
+                    (totem->GetEntry() == 31181) || // Healing Stream Totem (Rank 7)
+                    (totem->GetEntry() == 31182) || // Healing Stream Totem (Rank 8)
+                    (totem->GetEntry() == 31185) || // Healing Stream Totem (Rank 9)
+                    (totem->GetEntry() == 2523) || // Searing Totem
+                    (totem->GetEntry() == 3902) || // Searing Totem II
+                    (totem->GetEntry() == 3903) || // Searing Totem III
+                    (totem->GetEntry() == 3904) || // Searing Totem IV
+                    (totem->GetEntry() == 7400) || // Searing Totem V
+                    (totem->GetEntry() == 7402) || // Searing Totem VI
+                    (totem->GetEntry() == 15480) || // Searing Totem VII
+                    (totem->GetEntry() == 31162) || // Searing Totem VIII
+                    (totem->GetEntry() == 31164) || // Searing Totem IX
+                    (totem->GetEntry() == 31165) || // Searing Totem X
+                    (totem->GetEntry() == 5929) || // Magma Totem
+                    (totem->GetEntry() == 7464) || // Magma Totem II
+                    (totem->GetEntry() == 5929) || // Magma Totem III
+                    (totem->GetEntry() == 7466) || // Magma Totem IV
+                    (totem->GetEntry() == 15484) || // Magma Totem V
+                    (totem->GetEntry() == 31166) || // Magma Totem VI
+                    (totem->GetEntry() == 31167) || // Magma Totem VII
+                    (totem->GetEntry() == 5924) || // Cleansing Totem
+                    (totem->GetEntry() == 2630) || // Earthbind Totem
+                    (totem->GetEntry() == 5913)) // Tremor Totem
+                    return false;
 
     ASSERT(hatingUnit->GetTypeId() == TYPEID_UNIT);
 

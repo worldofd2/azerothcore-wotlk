@@ -840,7 +840,7 @@ void Pet::Update(uint32 diff)
                     }
                 }
 
-                if (getPetType() == HUNTER_PET)
+                /*if (getPetType() == HUNTER_PET)
                 {
                     m_happinessTimer -= diff;
                     if (m_happinessTimer <= int32(0))
@@ -848,7 +848,7 @@ void Pet::Update(uint32 diff)
                         LoseHappiness();
                         m_happinessTimer += PET_LOSE_HAPPINES_INTERVAL;
                     }
-                }
+                }*/
 
                 break;
             }
@@ -1392,6 +1392,18 @@ bool Guardian::InitStatsForLevel(uint8 petlevel)
                             SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel + (petlevel / 4)));
                             break;
                         }
+                    case NPC_TOUGH_GUY:
+                    {
+                        SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(petlevel * 3.5f - petlevel));
+                        SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(petlevel * 3.5f + petlevel));
+                        AddAura(SPELL_PET_AVOIDANCE, this);
+                        AddAura(SPELL_HUNTER_PET_SCALING_01, this);
+                        AddAura(SPELL_HUNTER_PET_SCALING_02, this);
+                        AddAura(SPELL_HUNTER_PET_SCALING_03, this);
+                        AddAura(SPELL_HUNTER_PET_SCALING_04, this);
+                        AddAura(SPELL_HUNTER_PET_SCALING_05, this);
+                        break;
+                    }
                 }
                 break;
             }

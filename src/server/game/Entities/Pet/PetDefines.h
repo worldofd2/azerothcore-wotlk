@@ -128,7 +128,10 @@ enum NPCEntries
 
     // Generic
     NPC_GENERIC_IMP             = 12922,
-    NPC_GENERIC_VOIDWALKER      = 8996
+    NPC_GENERIC_VOIDWALKER      = 8996,
+
+    // Perk
+    NPC_TOUGH_GUY               = 190200,
 };
 
 enum PetScalingSpells
@@ -139,6 +142,7 @@ enum PetScalingSpells
     SPELL_HUNTER_PET_SCALING_02         = 34903,
     SPELL_HUNTER_PET_SCALING_03         = 34904,
     SPELL_HUNTER_PET_SCALING_04         = 61017, // Hit / Expertise
+    SPELL_HUNTER_PET_SCALING_05         = 87100, // Dodge / ToBeCrit
 
     // Warlock
     SPELL_WARLOCK_PET_SCALING_01        = 34947,
