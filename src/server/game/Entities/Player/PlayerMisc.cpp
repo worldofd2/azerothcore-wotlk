@@ -198,36 +198,31 @@ void Player::ResetInstances(ObjectGuid guid, uint8 method, bool isRaid)
     {
         case INSTANCE_RESET_ALL:
         {
-            Player* p = ObjectAccessor::FindConnectedPlayer(guid);
-            if (!p || p->GetDifficulty(false) != DUNGEON_DIFFICULTY_NORMAL)
+            Player* player = ObjectAccessor::FindConnectedPlayer(guid);
+
+            if (!player)
                 break;
-            std::vector<InstanceSave*> toUnbind;
-            BoundInstancesMap const& m_boundInstances = sInstanceSaveMgr->PlayerGetBoundInstances(p->GetGUID(), Difficulty(DUNGEON_DIFFICULTY_NORMAL));
-            for (BoundInstancesMap::const_iterator itr = m_boundInstances.begin(); itr != m_boundInstances.end(); ++itr)
-            {
-                InstanceSave* instanceSave = itr->second.save;
-                MapEntry const* entry = sMapStore.LookupEntry(itr->first);
-                if (!entry || entry->IsRaid() || !instanceSave->CanReset())
-                {
-                    continue;
-                }
 
-                Map* map = sMapMgr->FindMap(instanceSave->GetMapId(), instanceSave->GetInstanceId());
-                if (!map || map->ToInstanceMap()->Reset(method))
-                {
-                    p->SendResetInstanceSuccess(instanceSave->GetMapId());
-                    toUnbind.push_back(instanceSave);
-                }
-                else
-                {
-                    p->SendResetInstanceFailed(0, instanceSave->GetMapId());
-                }
-
-                sInstanceSaveMgr->DeleteInstanceSavedData(instanceSave->GetInstanceId());
-            }
-            for (std::vector<InstanceSave*>::const_iterator itr = toUnbind.begin(); itr != toUnbind.end(); ++itr)
+            for (uint8 i = 0; i < MAX_DIFFICULTY; ++i)
             {
-                sInstanceSaveMgr->UnbindAllFor(*itr);
+                const BoundInstancesMap& binds = sInstanceSaveMgr->PlayerGetBoundInstances(player->GetGUID(), Difficulty(i));
+                for (BoundInstancesMap::const_iterator itr = binds.begin(); itr != binds.end();)
+                {
+                    InstanceSave* instanceSave = itr->second.save;
+                    Map* map = sMapMgr->FindMap(instanceSave->GetMapId(), instanceSave->GetInstanceId());
+                    if (itr->first != player->GetMapId())
+                    {
+                        sInstanceSaveMgr->PlayerUnbindInstance(player->GetGUID(), itr->first, Difficulty(i), true, player);
+                        if (!map || map->ToInstanceMap()->Reset(method)) {
+                            player->SendResetInstanceSuccess(instanceSave->GetMapId());
+                        }
+                        itr = binds.begin();
+                    }
+                    else
+                    {
+                        ++itr;
+                    }
+                }
             }
         }
             break;
