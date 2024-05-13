@@ -5372,12 +5372,12 @@ void Spell::TakeAmmo()
             else
             {
                 // decrease items amount for stackable throw weapon
-                uint32 count = 1;
+                uint32 count = 0;
                 m_caster->ToPlayer()->DestroyItemCount(pItem, count, true);
             }
         }
         else if (uint32 ammo = m_caster->ToPlayer()->GetUInt32Value(PLAYER_AMMO_ID))
-            m_caster->ToPlayer()->DestroyItemCount(ammo, 1, true);
+            m_caster->ToPlayer()->DestroyItemCount(ammo, 0, true);
     }
 }
 
