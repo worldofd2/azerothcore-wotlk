@@ -3711,8 +3711,8 @@ void Creature::LowerPlayerDamageReq(uint32 unDamage, bool damagedByPlayer /*= tr
 
 void Creature::ResetPlayerDamageReq()
 {
-    _playerDamageReq = GetHealth() / 2;
-    _damagedByPlayer = false;
+    _playerDamageReq = GetHealth() / 100;
+    _damagedByPlayer = true;
 }
 
 uint32 Creature::GetPlayerDamageReq() const
