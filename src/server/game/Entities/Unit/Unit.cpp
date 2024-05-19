@@ -10374,6 +10374,7 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
 
     // Set our target
     SetTarget(victim->GetGUID());
+    AddComboPoints(victim, 0);
 
     if (meleeAttack)
         AddUnitState(UNIT_STATE_MELEE_ATTACKING);
@@ -10440,6 +10441,7 @@ bool Unit::AttackStop()
     }
 
     SendMeleeAttackStop(victim);
+    AddComboPoints(victim, 0);
 
     return true;
 }
@@ -10453,6 +10455,7 @@ void Unit::CombatStop(bool includingCast)
     RemoveAllAttackers();
     if (GetTypeId() == TYPEID_PLAYER)
         ToPlayer()->SendAttackSwingCancelAttack();     // melee and ranged forced attack cancel
+    AddComboPoints(0);
     ClearInCombat();
 
     // xinef: just in case
@@ -14552,7 +14555,6 @@ void Unit::setDeathState(DeathState s, bool despawn)
         CombatStop();
         GetThreatMgr().ClearAllThreat();
         getHostileRefMgr().deleteReferences();
-        ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
 
         if (IsNonMeleeSpellCast(false))
             InterruptNonMeleeSpells(false);
@@ -15755,7 +15757,7 @@ void Unit::CleanupBeforeRemoveFromMap(bool finalCleanup)
 
     m_Events.KillAllEvents(false);                      // non-delatable (currently casted spells) will not deleted now but it will deleted at call in Map::RemoveAllObjectsInRemoveList
     CombatStop();
-    ClearComboPoints();
+    ClearComboPoints(true);
     ClearComboPointHolders();
     GetThreatMgr().ClearAllThreat();
     getHostileRefMgr().deleteReferences();
@@ -17109,10 +17111,11 @@ void Unit::RestoreDisplayId()
 
 void Unit::AddComboPoints(Unit* target, int8 count)
 {
-    if (!count)
-    {
-        return;
-    }
+    auto change = std::max<int8>(std::min<int8>(m_comboPoints + count, 6), 0);
+
+    // remove Premed-like effects
+    // (NB: this Aura removes the already-added CP when it expires from duration - now that we've added CP, this shouldn't happen anymore)
+    RemoveAurasByType(SPELL_AURA_RETAIN_COMBO_POINTS);
 
     if (target && target != m_comboTarget)
     {
@@ -17122,32 +17125,40 @@ void Unit::AddComboPoints(Unit* target, int8 count)
         }
 
         m_comboTarget = target;
-        m_comboPoints = count;
+        m_comboPoints = change;
+
         target->AddComboPointHolder(this);
-    }
-    else
-    {
-        m_comboPoints = std::max<int8>(std::min<int8>(m_comboPoints + count, 5), 0);
-    }
-
-    SendComboPoints();
-}
-
-void Unit::ClearComboPoints()
-{
-    if (!m_comboTarget)
-    {
+        SendComboPoints();
         return;
     }
 
-    // remove Premed-like effects
-    // (NB: this Aura retains the CP while it's active - now that CP have reset, it shouldn't be there anymore)
-    RemoveAurasByType(SPELL_AURA_RETAIN_COMBO_POINTS);
-
-    m_comboPoints = 0;
+    if (m_comboPoints != change)
+    {
+        m_comboPoints = change;
+    }
     SendComboPoints();
-    m_comboTarget->RemoveComboPointHolder(this);
-    m_comboTarget = nullptr;
+}
+
+void Unit::ClearComboPoints(bool clearPoints)
+{
+    if (m_comboTarget) {
+        // remove Premed-like effects
+        // (NB: this Aura retains the CP while it's active - now that CP have reset, it shouldn't be there anymore)
+        RemoveAurasByType(SPELL_AURA_RETAIN_COMBO_POINTS);
+
+        if (clearPoints)
+        {
+            m_comboPoints = 0;
+        }
+        m_comboTarget->RemoveComboPointHolder(this);
+        m_comboTarget = nullptr;
+        SendComboPoints();
+    }
+}
+
+void Unit::SetComboPoints(int amount)
+{
+    m_comboPoints = amount;
 }
 
 void Unit::SendComboPoints()
@@ -17188,11 +17199,11 @@ void Unit::SendComboPoints()
     }
 }
 
-void Unit::ClearComboPointHolders()
+void Unit::ClearComboPointHolders(bool removePoints)
 {
     while (!m_ComboPointHolders.empty())
     {
-        (*m_ComboPointHolders.begin())->ClearComboPoints(); // this also removes it from m_comboPointHolders
+        (*m_ComboPointHolders.begin())->ClearComboPoints(removePoints); // this also removes it from m_comboPointHolders
     }
 }
 

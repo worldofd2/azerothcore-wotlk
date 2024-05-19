@@ -4267,7 +4267,7 @@ void Spell::_handle_finish_phase()
     // Take for real after all targets are processed
     if (m_needComboPoints)
     {
-        m_caster->ClearComboPoints();
+        m_caster->ClearComboPoints(true);
     }
 
     // Real add combo points from effects
@@ -6756,7 +6756,7 @@ SpellCastResult Spell::CheckCast(bool strict)
     {
         if (m_spellInfo->NeedsExplicitUnitTarget())
         {
-            if (!m_caster->GetComboPoints(m_targets.GetUnitTarget()))
+            if (!m_caster->GetComboPoints())
             {
                 return SPELL_FAILED_NO_COMBO_POINTS;
             }
