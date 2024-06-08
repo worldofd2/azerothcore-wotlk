@@ -8149,7 +8149,15 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
                                 return false;
 
                             // apply cooldown before cast to prevent processing itself
-                            player->AddSpellCooldown(dummySpell->Id, 0, 3 * IN_MILLISECONDS);
+                            Item* twoHander = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND);
+                            if (twoHander->GetTemplate()->InventoryType != INVTYPE_2HWEAPON)
+                            {
+                                player->AddSpellCooldown(dummySpell->Id, 0, 3 * IN_MILLISECONDS);
+                            }
+                            else
+                            {
+                                player->AddSpellCooldown(dummySpell->Id, 0, .5 * IN_MILLISECONDS); // 2hander winfury ICD
+                            }
 
                             // Attack Twice
                             for (uint32 i = 0; i < 2; ++i)
