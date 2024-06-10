@@ -2390,6 +2390,9 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
                 case SUMMON_TYPE_LIGHTWELL:
                 case SUMMON_TYPE_TOTEM:
                     {
+                        if (Player* playerCaster = m_caster->ToPlayer())
+                            duration = 300000;
+
                         // protection code
                         summon = m_caster->GetMap()->SummonCreature(entry, *destTarget, properties, duration, m_originalCaster, m_spellInfo->Id, 0, personalSpawn);
                         if (!summon || !summon->IsTotem())
@@ -2401,6 +2404,8 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
 
                         if (damage && properties->Type != SUMMON_TYPE_LIGHTWELL) // Health set in script for lightwell
                         {
+                            if (Player* playerCaster = m_caster->ToPlayer())
+                                damage = playerCaster->GetLevel() * 500;
                             summon->SetMaxHealth(damage);
                             summon->SetHealth(damage);
                         }
