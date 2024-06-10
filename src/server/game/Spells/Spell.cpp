@@ -3574,7 +3574,7 @@ SpellCastResult Spell::prepare(SpellCastTargets const* targets, AuraEffect const
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
         if (m_spellInfo->HasAttribute(SPELL_ATTR0_IS_TRADESKILL))
-            m_casttime = .25;
+            m_casttime = .5 * IN_MILLISECONDS;
 
     // don't allow channeled spells / spells with cast time to be casted while moving
     // (even if they are interrupted on moving, spells with almost immediate effect get to have their effect processed before movement interrupter kicks in)
