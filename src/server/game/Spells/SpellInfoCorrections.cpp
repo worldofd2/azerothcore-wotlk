@@ -46,11 +46,12 @@ void SpellMgr::LoadSpellInfoCorrections()
         348, 707, 1094, 2941, 11665, 11667, 11668, 25309, 27215, 47810, 47811,      // Warlock - Immolate
         980, 1014, 6217, 11711, 11712, 11713, 27218, 47863, 47864,                  // Warlock - Curse of Agony
         1490, 11721, 11722, 27228, 47865,                                           // Warlock - Curse of the Elements
+        30108, 30404, 30405, 47841, 47843,                                          // Warlock - Unstable Affliction
         25742,                                                                      // Paladin - Seal of Righteousness
         772, 6546, 6547, 6548, 11572, 11573, 11574, 25208, 46845, 47465,            // Warrior - Rend
         8050, 8052, 8053, 10447, 10448, 29228, 25457, 49232, 49233,                 // Shaman - Flame Shock
         8034, 8037, 10458, 16352, 16353, 25501, 58797, 58798, 58799,                // Shaman - Frostbrand
-        8921, 8924, 8925, 8926, 8927, 8928, 8929, 9833, 9834, 9835, 26987, 26988, 48462, 48463,     // Druid - Moonfire
+        8921,8924,8925,8926,8927,8928,8929,9833,9834,9835,26987,26988,48462,48463,  // Druid - Moonfire
         5570, 24974, 24975, 24976, 24977, 24013, 48468,                             // Druid - Insect Swarm
         1822, 1823, 1824, 9904, 27003, 48573, 48574,                                // Druid - Rake
         1079, 9492, 9493, 9752, 9894, 9896, 27008, 49799, 49800,                    // Druid - Rip
@@ -58,13 +59,14 @@ void SpellMgr::LoadSpellInfoCorrections()
         34914, 34916, 34917, 48159, 48160,                                          // Priest - Vampiric Touch
         2944, 19276, 19277, 19278, 19279, 19280, 25467, 48299,                      // Priest - Devouring Plague
         44457, 55359, 55360,                                                        // Mage - Living Bomb
+        1943, 8639, 8640, 11273, 11274, 11275, 26867, 48671, 48672,                 // Rogue - Rupture
     }, [](SpellInfo* spellInfo)
     {
         spellInfo->Effects[EFFECT_0].TargetB = SpellImplicitTargetInfo(TARGET_UNIT_DEST_AREA_ENEMY);
         spellInfo->Effects[EFFECT_0].RadiusEntry = sSpellRadiusStore.LookupEntry(EFFECT_RADIUS_10_YARDS);
 
         if (spellInfo->Effects[EFFECT_1].Effect) {
-            spellInfo->Effects[EFFECT_1].TargetB = SpellImplicitTargetInfo(TARGET_UNIT_NEARBY_ENEMY);
+            spellInfo->Effects[EFFECT_1].TargetB = SpellImplicitTargetInfo(TARGET_UNIT_DEST_AREA_ENEMY);
             spellInfo->Effects[EFFECT_1].RadiusEntry = sSpellRadiusStore.LookupEntry(EFFECT_RADIUS_10_YARDS);
         }
 
