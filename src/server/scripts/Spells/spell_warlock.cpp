@@ -287,7 +287,7 @@ class spell_warl_generic_scaling : public AuraScript
         if (Unit* owner = GetUnitOwner()->GetOwner())
         {
             SpellSchoolMask schoolMask = SpellSchoolMask(aurEff->GetSpellInfo()->Effects[aurEff->GetEffIndex()].MiscValue);
-            int32 modifier = schoolMask == SPELL_SCHOOL_MASK_NORMAL ? 35 : 40;
+            int32 modifier = schoolMask == SPELL_SCHOOL_MASK_NORMAL ? 100 : 100;
             amount = CalculatePct(std::max<int32>(0, owner->GetResistance(schoolMask)), modifier);
             if (owner->HasAura(SPELL_WARLOCK_PET_VOID_STAR_TALISMAN) && schoolMask != SPELL_SCHOOL_MASK_NORMAL)
             {
@@ -303,7 +303,7 @@ class spell_warl_generic_scaling : public AuraScript
         if (Unit* owner = GetUnitOwner()->GetOwner())
         {
             Stats stat = Stats(aurEff->GetSpellInfo()->Effects[aurEff->GetEffIndex()].MiscValue);
-            int32 modifier = stat == STAT_STAMINA ? 75 : 30;
+            int32 modifier = stat == STAT_STAMINA ? 100 : 30;
             amount = CalculatePct(std::max<int32>(0, owner->GetStat(stat)), modifier);
         }
     }
